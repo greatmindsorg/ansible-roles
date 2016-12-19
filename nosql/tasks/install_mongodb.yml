@@ -1,0 +1,13 @@
+---
+- name: install mongodb
+  become: yes
+  apt:
+      name: mongodb
+      state: present
+
+- name: ensure mongodb is started
+  become: yes
+  service:
+      name: mongodb
+      state: started
+      enabled: yes
