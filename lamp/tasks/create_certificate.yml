@@ -1,0 +1,7 @@
+---
+# h/t to https://serialized.net/2013/04/simply-generating-self-signed-ssl-certs-with-ansible/
+- name: create self-signed SSL cert
+  become: yes
+  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Virginia/L=Richmond/O=IT/CN={{ hostname }}" -days 3650 -keyout /etc/ssl/private/{{ hostname }}.key -out /etc/ssl/certs/{{ hostname }}.crt -extensions v3_ca
+  args:
+      creates: /etc/ssl/certs/{{ hostname }}.crt

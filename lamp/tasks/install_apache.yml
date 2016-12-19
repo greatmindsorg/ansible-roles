@@ -1,0 +1,45 @@
+---
+- name: install apache2
+  become: yes
+  apt:
+      name: apache2
+      state: present
+
+- name: enable mods
+  become: yes
+  apache2_module:
+      name: "{{ item }}"
+      state: present
+  with_items:
+      - proxy
+      - proxy_fcgi
+      - rewrite
+      - ssl
+
+- name: create virtual host file
+  become: yes
+  template:
+      src: vhost.conf.j2
+      dest: /etc/apache2/sites-available/{{ hostname }}.conf
+
+- name: enable new site
+  become: yes
+  file:
+      src: /etc/apache2/sites-available/{{ hostname }}.conf
+      dest: /etc/apache2/sites-enabled/{{ hostname }}.conf
+      state: link
+
+- name: disable default sites
+  become: yes
+  file:
+      path: /etc/apache2/sites-enabled/{{ item }}.conf
+      state: absent
+  with_items:
+    - 000-default
+    - default-ssl
+
+- name: ensure apache2 is started
+  service:
+      name: apache2
+      state: started
+      enabled: yes

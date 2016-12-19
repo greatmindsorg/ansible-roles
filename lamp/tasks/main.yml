@@ -1,0 +1,6 @@
+---
+- include: create_certificate.yml
+- include: install_apache.yml
+- include: install_mysql.yml
+- include: install_php.yml
+- include: install_composer.yml
