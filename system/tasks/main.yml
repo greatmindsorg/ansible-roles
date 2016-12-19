@@ -1,4 +1,5 @@
 ---
+- include: add_swap.yml
 - include: set_timezone.yml
 - include: enable_ufw.yml
 - include: install_supervisor.yml
