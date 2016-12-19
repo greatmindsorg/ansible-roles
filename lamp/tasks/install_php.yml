@@ -4,7 +4,7 @@
   apt:
       name: "{{ item }}"
       state: present
-  with_items: "{{ ['php5-fpm', 'php5-cli'] + php_modules }}"
+  with_items: "{{ ['php5-fpm', 'php5-cli', 'php5-mysql'] + php_modules }}"
 
 - name: ensure php5-fpm is started
   become: yes
