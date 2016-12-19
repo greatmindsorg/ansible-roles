@@ -9,6 +9,12 @@
       - mysql-client
       - python-mysqldb
 
+- name: ensure mysql is started
+  service:
+      name: mysql
+      state: started
+      enabled: yes
+
 - name: set root user password
   become: yes
   mysql_user:
@@ -55,10 +61,3 @@
       name: "{{ item }}"
       state: present
   with_items: "{{ mysql_databases }}"
-
-- name: ensure mysql is started
-  service:
-      name: mysql
-      state: started
-      enabled: yes
-

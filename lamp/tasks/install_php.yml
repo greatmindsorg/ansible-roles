@@ -6,10 +6,11 @@
       state: present
   with_items: "{{ ['php5-fpm', 'php5-cli'] + php_modules }}"
 
-- name: ensure php5-fpm is enabled
+- name: ensure php5-fpm is started
   become: yes
   service:
       name: php5-fpm
+      state: started
       enabled: yes
 
 - name: change php-fpm to listen on socket
@@ -20,7 +21,7 @@
       option: listen
       value: 127.0.0.1:9000
 
-- name: change php-fpm to listen on socket
+- name: set default timezone
   become: yes
   ini_file:
       dest: /etc/php5/fpm/php.ini
@@ -29,4 +30,3 @@
       value: 'America/New_York'
   notify:
       - restart php
-      - restart apache

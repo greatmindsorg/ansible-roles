@@ -5,6 +5,12 @@
       name: apache2
       state: present
 
+- name: ensure apache2 is started
+  service:
+      name: apache2
+      state: started
+      enabled: yes
+
 - name: enable mods
   become: yes
   apache2_module:
@@ -15,6 +21,15 @@
       - proxy_fcgi
       - rewrite
       - ssl
+
+- name: disable default sites
+  become: yes
+  file:
+      path: /etc/apache2/sites-enabled/{{ item }}.conf
+      state: absent
+  with_items:
+    - 000-default
+    - default-ssl
 
 - name: create virtual host file
   become: yes
@@ -28,18 +43,5 @@
       src: /etc/apache2/sites-available/{{ hostname }}.conf
       dest: /etc/apache2/sites-enabled/{{ hostname }}.conf
       state: link
-
-- name: disable default sites
-  become: yes
-  file:
-      path: /etc/apache2/sites-enabled/{{ item }}.conf
-      state: absent
-  with_items:
-    - 000-default
-    - default-ssl
-
-- name: ensure apache2 is started
-  service:
-      name: apache2
-      state: started
-      enabled: yes
+  notify:
+      - restart apache
