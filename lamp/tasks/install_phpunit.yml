@@ -2,7 +2,7 @@
 - name: install phpunit
   become: yes
   get_url:
-      url: https://phar.phpunit.de/phpunit.phar
+      url: https://phar.phpunit.de/phpunit-4.8.phar # required for php 5.5
       dest: /usr/local/bin/phpunit
       mode: 0755
   tags: phpunit
