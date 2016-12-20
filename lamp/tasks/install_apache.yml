@@ -36,6 +36,10 @@
   template:
       src: vhost.conf.j2
       dest: /etc/apache2/sites-available/{{ hostname }}.conf
+  notify:
+      - restart apache
+  tags:
+      - vhost
 
 - name: enable new site
   become: yes
