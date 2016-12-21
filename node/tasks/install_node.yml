@@ -1,0 +1,21 @@
+---
+# note that this automatically installs npm in addition to node
+# https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
+
+- name: add node sources
+  become: yes
+  shell: curl -sL https://deb.nodesource.com/setup_6.x | bash -
+  args:
+      creates: /etc/apt/sources.list.d/nodesource.list
+  tags:
+      - node
+      - npm
+
+- name: install node and npm
+  become: yes
+  apt:
+      name: nodejs
+      state: present
+  tags:
+      - node
+      - npm
