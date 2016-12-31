@@ -4,19 +4,19 @@
   apt:
       name: "{{ item }}"
       state: present
-  with_items: "{{ ['php5-fpm', 'php5-cli', 'php5-mysql'] + php_modules }}"
+  with_items: "{{ ['php-fpm', 'php-cli', 'php-mysql'] + php_modules }}"
 
-- name: ensure php5-fpm is started
+- name: ensure php-fpm is started
   become: yes
   service:
-      name: php5-fpm
+      name: php7.0-fpm
       state: started
       enabled: yes
 
 - name: change php-fpm to listen on socket
   become: yes
   ini_file:
-      dest: /etc/php5/fpm/pool.d/www.conf
+      dest: /etc/php/7.0/fpm/pool.d/www.conf
       section: www
       option: listen
       value: 127.0.0.1:9000
@@ -24,7 +24,7 @@
 - name: set default timezone
   become: yes
   ini_file:
-      dest: /etc/php5/fpm/php.ini
+      dest: /etc/php/7.0/fpm/php.ini
       section: Date
       option: date.timezone
       value: 'America/New_York'
