@@ -3,5 +3,15 @@
 - include: install_apache.yml
 - include: install_mysql.yml
 - include: install_php.yml
-- include: install_composer.yml
 - include: install_phpunit.yml
+
+- stat:
+      path: /usr/local/bin/composer
+  register: composer
+  tags:
+      - composer
+
+- include: install_composer.yml
+  when: composer.stat.exists == false
+  tags:
+      - composer
