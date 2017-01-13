@@ -5,6 +5,8 @@
       name: "{{ item }}"
       state: present
   with_items: "{{ ['php5-fpm', 'php5-cli', 'php5-mysql'] + php_modules | default([]) }}"
+  tags:
+      - php_modules
 
 - name: ensure php5-fpm is started
   become: yes
