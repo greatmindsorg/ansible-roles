@@ -10,7 +10,7 @@
 - name: install mongodb
   become: yes
   apt:
-      name: mongodb
+      name: mongodb-org
       state: present
       update_cache: yes
   tags:
@@ -19,7 +19,7 @@
 - name: ensure mongo is started
   become: yes
   service:
-      name: mongodb
+      name: mongod
       state: started
       enabled: yes
   tags:
