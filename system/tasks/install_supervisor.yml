@@ -4,6 +4,8 @@
   apt:
       name: supervisor
       state: present
+  tags:
+      - supervisor
 
 - name: ensure supervisor is enabled
   become: yes
@@ -11,3 +13,5 @@
       name: supervisor
       state: started
       enabled: yes
+  tags:
+      - supervisor
