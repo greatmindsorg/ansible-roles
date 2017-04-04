@@ -1,18 +1,32 @@
 ---
-- name: create openssl conf file
+# h/t to http://stackoverflow.com/a/21494483/1676099
+- name: add SAN to openssl conf file
   become: yes
-  template:
-      src: openssl.cnf.j2
-      dest: /usr/local/lib/openssl.cnf
-  notify:
-      - restart apache
+  ini_file:
+      dest: /etc/ssl/openssl.cnf
+      section: '{{ item.section }}'
+      option: '{{ item.option }}'
+      value: '{{ item.value }}'
+  with_items:
+      - section: alternate_names
+        option: DNS.1
+        value: '{{ hostname }}'
+      - section: v3_ca
+        option: subjectAltName
+        value: '@alternate_names'
+      - section: v3_ca
+        option: keyUsage
+        value: 'digitalSignature, keyEncipherment'
+      - section: CA_default
+        option: copy_extensions
+        value: copy
   tags:
       - cert
 
 # h/t to https://serialized.net/2013/04/simply-generating-self-signed-ssl-certs-with-ansible/
 - name: create self-signed SSL cert
   become: yes
-  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Virginia/L=Richmond/O=Foster Made/CN=Local Dev" -days 3650 -keyout /etc/ssl/private/{{ hostname }}.key -out /etc/ssl/certs/{{ hostname }}.crt -extensions v3_ca -config /usr/local/lib/openssl.cnf
+  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Virginia/L=Richmond/O=Foster Made/CN=Local Dev" -days 3650 -keyout /etc/ssl/private/{{ hostname }}.key -out /etc/ssl/certs/{{ hostname }}.crt -extensions v3_ca
   args:
       creates: /etc/ssl/certs/{{ hostname }}.crt
   notify:
