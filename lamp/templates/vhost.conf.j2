@@ -1,5 +1,3 @@
-{% set document_root = "/var/www/" ~ hostname ~ "/" ~ public_dir %}
-
 <VirtualHost *:80>
   ServerName {{ hostname }}
   RedirectPermanent / https://{{ hostname }}/
