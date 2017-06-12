@@ -1,0 +1,21 @@
+---
+- name: install php sybase extension (and freetds-bin for testing the connection)
+  become: yes
+  apt:
+      name: '{{ item }}'
+      state: present
+  with_items:
+    - php5-sybase
+    - freetds-bin
+  tags:
+      - sqlsrv
+
+- name: change tds version to 8
+  become: yes
+  ini_file:
+      dest: /etc/freetds/freetds.conf
+      section: global
+      option: "\ttds version" # the freetds.conf uses leading tabs, which are not currently matched by the ini_file module
+      value: 8
+  tags:
+    - sqlsrv
