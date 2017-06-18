@@ -5,6 +5,7 @@
 - include: install_php.yml
 - include: install_phpunit.yml
 - include: install_packages.yml
+#- include: clone_repositories.yml
 
 - stat:
       path: /usr/local/bin/composer
