@@ -1,24 +1,36 @@
 ---
+- set_fact:
+    php_version: 7.0
+  when: php_version is not defined
+
+- name: add php repo
+  become: yes
+  apt_repository:
+    repo: 'ppa:ondrej/php'
+    state: present
+    update_cache: yes
+  when: php_version != 7.0
+
 - name: install php
   become: yes
   apt:
-      name: "{{ item }}"
+      name: "php{{ '' if php_version == '7.0' else php_version }}-{{ item }}"
       state: present
-  with_items: "{{ ['php-fpm', 'php-cli', 'php-mysql'] + php_modules | default([]) }}"
+  with_items: "{{ ['fpm', 'cli', 'mysql'] + php_modules | default([]) }}"
   tags:
       - php_modules
 
 - name: ensure php-fpm is started
   become: yes
   service:
-      name: php7.0-fpm
+      name: "php{{ php_version }}-fpm"
       state: started
       enabled: yes
 
 - name: change php-fpm to listen on socket
   become: yes
   ini_file:
-      dest: /etc/php/7.0/fpm/pool.d/www.conf
+      dest: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
       section: www
       option: listen
       value: 127.0.0.1:9000
@@ -26,7 +38,7 @@
 - name: set default timezone
   become: yes
   ini_file:
-      dest: /etc/php/7.0/fpm/php.ini
+      dest: "/etc/php/{{ php_version }}/fpm/php.ini"
       section: Date
       option: date.timezone
       value: 'America/New_York'
