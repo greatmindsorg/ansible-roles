@@ -4,3 +4,4 @@
 - include: enable_ufw.yml
 - include: install_supervisor.yml
 - include: install_mailhog.yml
+- include: install_packages.yml
