@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# h/t http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/
+
+NAME="{{ item.project_name }}_app"                              # Name of the application (project.name)
+DJANGODIR={{ item.web_root }}                                   # Django project directory (hosts.name, project.name)
+SOCKFILE={{ item.web_root }}/run/{{ item.project_name }}.sock   # we will communicte using this unix socket (hosts.name, project.name)
+USER=vagrant                                                    # the user to run as
+GROUP=vagrant                                                   # the group to run as
+NUM_WORKERS=3                                                   # how many worker processes should Gunicorn spawn
+DJANGO_SETTINGS_MODULE={{ item.project_name }}.settings         # which settings file should Django use (project.name)
+DJANGO_WSGI_MODULE={{ item.project_name }}.wsgi                 # WSGI module name (project.name)
+
+echo "Starting $NAME as `whoami`"
+
+# Activate the virtual environment
+cd $DJANGODIR
+source ../bin/activate
+export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+export PYTHONPATH=$DJANGODIR:$PYTHONPATH
+
+# Create the run directory if it doesn't exist
+RUNDIR=$(dirname $SOCKFILE)
+test -d $RUNDIR || mkdir -p $RUNDIR
+
+# Start your Django Unicorn
+# Programs meant to be run under supervisor should not daemonize themselves (do not use --daemon)
+# 
+# added --reload for local environments. would have to restart gunicorn otherwise
+# DON'T ADD --reload ON PRODUCTION!!!
+exec {{ item.web_root }}/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
+  --name $NAME \
+  --workers $NUM_WORKERS \
+  --user=$USER --group=$GROUP \
+  --bind=unix:$SOCKFILE \
+  --log-level=debug \
+  --log-file=- \
+  --reload

@@ -1,0 +1,17 @@
+---
+- name: create gunicorn supervisor
+  become: yes
+  template:
+      src: supervisor.conf.j2
+      dest: /etc/supervisor/conf.d/{{ item.hostname }}.conf
+  with_items:
+      - "{{ hosts }}"
+
+- name: ensure gunicorn is included in supervisorctl
+  become: yes
+  supervisorctl:
+      name: "{{ item.project_name}}"
+      state: present
+  with_items: "{{ hosts }}"
+  notify: 
+      - restart supervisor

@@ -1,0 +1,12 @@
+---
+- name: create gunicorn configuration file
+  template:
+      src: gunicorn.conf.j2
+      dest: "{{ item.web_root }}/bin/{{ item.project_name }}_gunicorn_start"
+  with_items: "{{ hosts }}"
+
+- name: make gunicorn file executable
+  file: 
+      dest: "{{ item.web_root }}/bin/{{ item.project_name }}_gunicorn_start"
+      mode: a+x
+  with_items: "{{ hosts }}"

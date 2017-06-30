@@ -1,0 +1,61 @@
+---
+- name: install postgresql
+  become: yes
+  apt:
+      name: "{{ item }}"
+      state: present
+  with_items:
+      - postgresql-9.5
+      - postgresql-client-9.5
+      - postgresql-contrib-9.5
+      - python-psycopg2
+      - libpq-dev
+  tags:
+      - postgresql_packages
+
+- name: ensure postgresql is running
+  become: yes
+  service:
+      name: postgresql
+      state: started
+      enabled: yes
+
+- name: create database
+  become: yes
+  become_user: postgres
+  postgresql_db:
+      name: "{{ item.db_name }}"
+      encoding: 'UTF-8'
+      lc_collate: 'en_US.UTF-8'
+      lc_ctype: 'en_US.UTF-8'
+      template: 'template0'
+      state: present
+  with_items: "{{ psql_databases }}"
+
+- name: create user
+  become: yes
+  become_user: postgres
+  postgresql_user: 
+      name: "{{ item.db_user }}" 
+      password: "{{ item.db_pass }}" 
+      state: present 
+      role_attr_flags: NOSUPERUSER,CREATEDB
+  with_items: "{{ psql_databases }}"
+
+- name: provide user with db permissions
+  become: yes
+  become_user: postgres
+  postgresql_user: 
+      user: "{{ item.db_user }}" 
+      db: "{{ item.db_name }}" 
+      priv: ALL
+  with_items: "{{ psql_databases }}"
+
+- name: allow password authentication for local socket users
+  become: yes
+  copy: 
+      src: pg_hba.conf 
+      dest: /etc/postgresql/9.5/main/pg_hba.conf 
+      force: yes
+  notify:
+      - restart postgresql

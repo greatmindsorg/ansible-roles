@@ -1,0 +1,7 @@
+---
+- include: install_postgresql.yml
+- include: install_nginx.yml
+- include: install_python_packages.yml
+- include: install_django.yml
+- include: configure_gunicorn.yml
+- include: configure_supervisor.yml

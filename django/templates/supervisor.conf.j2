@@ -1,0 +1,9 @@
+# h/t http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/
+
+[program:{{ item.project_name }}]
+command = {{ item.web_root }}/bin/{{ item.project_name }}_gunicorn_start				; Command to start app
+user = vagrant																			; User to run as
+stdout_logfile = /var/log/supervisor/{{ item.hostname }}_gunicorn_supervisor.log 		; Where to write log messages
+stderr_logfile = /var/log/supervisor/{{ item.hostname }}_gunicorn_supervisor.error
+redirect_stderr = true																	; Save stderr in the same log
+environment=LANG=en_US.UTF-8,LC_ALL=en_US.UTF-8											; Set UTF-8 as default encoding
