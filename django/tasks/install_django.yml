@@ -1,29 +1,23 @@
 ---
-- name: create virtualenv in web root
-  command: "virtualenv ."
-  args:
-      chdir: "{{ item.web_root }}"
-  with_items: "{{ hosts }}"
-
-- name: activate the virtualenv
-  shell: source {{ item.web_root }}/bin/activate
-  args:
-      executable: /bin/bash
-  with_items: "{{ hosts }}"
-
 - name: install pip requirements in virtualenv
   pip:
       virtualenv: "{{ item.web_root }}"
       requirements: "{{ item.web_root }}/requirements.txt"
   with_items: "{{ hosts }}"
+  
+- name: migrate database
+  django_manage:
+      command: migrate
+      app_path: "{{ item.document_root }}"
+      virtualenv: "{{ item.web_root }}"
+  with_items: "{{ hosts }}"
+
+- name: collect static
+  django_manage:
+      command: collectstatic
+      app_path: "{{ item.document_root }}"
+      virtualenv: "{{ item.web_root }}"
+  with_items: "{{ hosts }}"
   notify:
       - update supervisor
       - restart supervisor
-
-### after all this runs...still need to manually:
-### doesn't appear to be a way to do this via ansible
-#
-# 1) cd into web_root
-# 2) run source bin/activate
-# 3) django-admin startproject [project-name] .
-# 4) restart supervisor (supervisorctl restart all)
