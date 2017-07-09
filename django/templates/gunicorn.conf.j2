@@ -2,19 +2,36 @@
 
 # h/t http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/
 
-NAME="{{ item.project_name }}_app"                              # Name of the application (project.name)
-DJANGODIR={{ item.web_root }}                                   # Django project directory (hosts.name, project.name)
-SOCKFILE={{ item.web_root }}/run/{{ item.project_name }}.sock   # we will communicte using this unix socket (hosts.name, project.name)
-USER=vagrant                                                    # the user to run as
-GROUP=vagrant                                                   # the group to run as
-NUM_WORKERS=3                                                   # how many worker processes should Gunicorn spawn
-DJANGO_SETTINGS_MODULE={{ item.project_name }}.settings         # which settings file should Django use (project.name)
-DJANGO_WSGI_MODULE={{ item.project_name }}.wsgi                 # WSGI module name (project.name)
+# Name of the application (project.name)
+NAME="{{ item.project_name }}"
+
+# Django project directory (hosts.name, project.name)
+DJANGODIR={{ item.web_root }}
+
+# we will communicte using this unix socket (hosts.name, project.name)
+SOCKFILE={{ item.web_root }}/run/{{ item.project_name }}.sock
+
+# the user/group to run as
+USER=vagrant
+GROUP=vagrant
+
+# how many worker processes should Gunicorn spawn
+NUM_WORKERS=3
+
+# which settings file should Django use (project.name)
+DJANGO_SETTINGS_MODULE={{ item.project_name }}.settings
+
+# WSGI module name (project.name)
+DJANGO_WSGI_MODULE={{ item.project_name }}.wsgi
 
 echo "Starting $NAME as `whoami`"
 
 # Activate the virtual environment
-cd $DJANGODIR
+#
+# this is sort of funky...don't know why we have to
+# cd into $DJANGODIR/$NAME and then go back one dir
+# to activate the virtualenv...
+cd $DJANGODIR/$NAME
 source ../bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 export PYTHONPATH=$DJANGODIR:$PYTHONPATH
@@ -28,7 +45,7 @@ test -d $RUNDIR || mkdir -p $RUNDIR
 # 
 # added --reload for local environments. would have to restart gunicorn otherwise
 # DON'T ADD --reload ON PRODUCTION!!!
-exec {{ item.web_root }}/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
+exec ../bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
   --name $NAME \
   --workers $NUM_WORKERS \
   --user=$USER --group=$GROUP \
