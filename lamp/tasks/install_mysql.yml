@@ -4,7 +4,10 @@
   apt:
       name: "{{ item }}"
       state: present
-  with_items: "{{ mysql_modules }}"
+  with_items:
+      - mysql-server
+      - mysql-client
+      - python-mysqldb
 
 - name: ensure mysql is started
   service:
