@@ -14,5 +14,5 @@
 - name: restart php
   become: yes
   service:
-      name: "{{ fpm_service }}"
+      name: php7.0-fpm
       state: restarted
