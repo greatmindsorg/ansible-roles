@@ -1,0 +1,4 @@
+- name: set hostname  
+  become: yes
+  hostname:
+      name: "{{ hosts[0].hostname }}"
