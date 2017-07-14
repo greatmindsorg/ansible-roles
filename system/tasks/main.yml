@@ -5,4 +5,3 @@
 - include: install_supervisor.yml
 - include: install_mailhog.yml
 - include: install_packages.yml
-- include: set_hostname.yml
