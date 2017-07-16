@@ -16,7 +16,7 @@
   apt:
       name: "php{{ php_version if php_version != 7.0 else '' }}-{{ item }}"
       state: present
-  with_items: "{{ ['fpm', 'cli', 'mysql', 'zip'] + php_modules | default([]) }}"
+  with_items: "{{ ['fpm', 'cli', 'mysql'] + php_modules | default([]) }}"
   tags:
       - php_modules
 
