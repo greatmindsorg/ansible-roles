@@ -12,6 +12,13 @@
       virtualenv: "{{ item.web_root }}"
   with_items: "{{ hosts }}"
 
+- name: modify ALLOWED_HOSTS in settings.py
+  lineinfile:
+      path: "{{ item.web_root}}/{{ item.project_name }}/settings.py"
+      regexp: '^ALLOWED_HOSTS'
+      line: 'ALLOWED_HOSTS = ["{{ item.hostname }}"]'
+  with_items: "{{ hosts }}"
+
 - name: add STATIC_ROOT to settings.py
   lineinfile:
       path: "{{ item.web_root}}/{{ item.project_name }}/settings.py"
