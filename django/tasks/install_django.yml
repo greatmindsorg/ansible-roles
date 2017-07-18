@@ -12,6 +12,12 @@
       virtualenv: "{{ item.web_root }}"
   with_items: "{{ hosts }}"
 
+- name: add STATIC_ROOT to settings.py
+  lineinfile:
+      path: "{{ item.web_root}}/{{ item.project_name }}/settings.py"
+      line: "STATIC_ROOT = os.path.join(BASE_DIR, 'static/')"
+  with_items: "{{ hosts }}"
+
 - name: collect static
   django_manage:
       command: collectstatic
