@@ -7,5 +7,6 @@
   notify:
       - restart apache
       - restart php
+  when: (disable_xdebug != true)
   tags:
       - xdebug
