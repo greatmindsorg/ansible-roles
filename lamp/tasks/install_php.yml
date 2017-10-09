@@ -44,3 +44,14 @@
       value: 'America/New_York'
   notify:
       - restart php
+
+- name: override php settings
+  become: yes
+  with_items: "{{ php_config | default([]) }}"
+  ini_file:
+      dest: "/etc/php/{{ php_version }}/fpm/php.ini"
+      option: "{{ item.option }}"
+      section: "{{ item.section | default('PHP') }}"
+      value: "{{ item.value }}"
+  notify:
+      - restart php

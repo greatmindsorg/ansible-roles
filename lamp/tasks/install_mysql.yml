@@ -61,3 +61,14 @@
       name: "{{ item }}"
       state: present
   with_items: "{{ mysql_databases }}"
+
+- name: override mysql settings
+  become: yes
+  with_items: "{{ mysql_config | default([]) }}"
+  ini_file:
+      dest: "/etc/mysql/my.cnf"
+      option: "{{ item.option }}"
+      section: "{{ item.section | default('mysqld') }}"
+      value: "{{ item.value }}"
+  notify:
+      - restart mysql
