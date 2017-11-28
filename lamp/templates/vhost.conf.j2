@@ -7,7 +7,9 @@
   ServerName {{ hostname }}
 
   DocumentRoot "{{ document_root }}"
-  ProxyPassMatch ^/(.*\.php(/.*)?)$ fcgi://127.0.0.1:9000{{ document_root }}
+  <FilesMatch \.php$>
+    SetHandler "proxy:fcgi://127.0.0.1:9000"
+  </FilesMatch>
 
   <Directory "{{ document_root }}">
     Options Indexes FollowSymlinks MultiViews
