@@ -1,8 +1,4 @@
 ---
-- set_fact:
-    trust_cert: 1
-  when: trust_cert is not defined
-
 # h/t to http://stackoverflow.com/a/21494483/1676099
 - name: add SAN to openssl conf file
   become: yes
@@ -44,9 +40,4 @@
     src: /etc/ssl/certs/{{ hostname }}.crt
     dest: /usr/local/etc/ssl/certs/{{ hostname }}.crt
     flat: yes
-  when: trust_cert != 0
-
-- name: trust self-signed cert
-  become: yes
-  local_action: command security add-trusted-cert -d -k '/Library/Keychains/System.keychain' /usr/local/etc/ssl/certs/{{ hostname }}.crt
   when: trust_cert != 0
