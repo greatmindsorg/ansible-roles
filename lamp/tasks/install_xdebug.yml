@@ -1,4 +1,8 @@
 ---
+- set_fact:
+    xdebug_port: 9000
+  when: xdebug_port is not defined
+
 - name: setup xdebug config
   become: yes
   template:
