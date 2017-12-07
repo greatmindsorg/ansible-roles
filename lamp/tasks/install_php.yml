@@ -2,6 +2,8 @@
 - set_fact:
     php_version: 7.0
   when: php_version is not defined
+  tags:
+      - php_modules
 
 - name: add php repo
   become: yes
@@ -10,6 +12,8 @@
     state: present
     update_cache: yes
   when: php_version != 7.0
+  tags:
+      - php_modules
 
 - name: install php
   become: yes
