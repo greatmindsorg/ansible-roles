@@ -1,4 +1,8 @@
 ---
+- set_fact:
+    trust_cert: 1
+  when: trust_cert is not defined
+
 # h/t to http://stackoverflow.com/a/21494483/1676099
 - name: add SAN to openssl conf file
   become: yes
