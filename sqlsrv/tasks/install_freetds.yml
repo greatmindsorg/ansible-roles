@@ -62,7 +62,7 @@
         with_items:
             - freetds_hash
             - freetds-patched.tar.gz
-            - freetds-patched
+            - "{{ freetds_version.stdout }}"
   become: yes
   when: sqlsrv.stat.exists == false
   tags:
