@@ -5,6 +5,9 @@
 - stat:
       path: /usr/bin/node
   register: node
+  tags:
+      - node
+      - npm
 
 - block:
       - name: download node setup script
