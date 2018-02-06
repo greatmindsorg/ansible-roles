@@ -3,6 +3,10 @@
     trust_cert: 1
   when: trust_cert is not defined
 
+- set_fact:
+    certpath: /usr/local/etc
+  when: certpath is not defined
+
 # h/t to http://stackoverflow.com/a/21494483/1676099
 - name: add SAN to openssl conf file
   become: yes
@@ -42,6 +46,6 @@
   become: yes
   fetch:
     src: /etc/ssl/certs/{{ hostname }}.crt
-    dest: /usr/local/etc/ssl/certs/{{ hostname }}.crt
+    dest: '{{ certpath }}/ssl/certs/{{ hostname }}.crt'
     flat: yes
   when: trust_cert != 0
