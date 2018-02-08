@@ -3,6 +3,10 @@
     trust_cert: 1
   when: trust_cert is not defined
 
+- set_fact:
+    email_hostname: '{{ "email." ~ hostname }}'
+  when: email_hostname is not defined
+
 # h/t to http://stackoverflow.com/a/21494483/1676099
 - name: add SAN to openssl conf file
   become: yes
@@ -15,6 +19,9 @@
       - section: alternate_names
         option: DNS.1
         value: '{{ hostname }}'
+      - section: alternate_names
+        option: DNS.2
+        value: '{{ email_hostname }}'
       - section: v3_ca
         option: subjectAltName
         value: '@alternate_names'
