@@ -4,11 +4,11 @@
   when: trust_cert is not defined
 
 - set_fact:
-  certpath: /usr/local/etc
+    certpath: /usr/local/etc
   when: certpath is not defined
 
 - set_fact:
-  email_hostname: '{{ "email." ~ hostname }}'
+    email_hostname: '{{ "email." ~ hostname }}'
   when: email_hostname is not defined
 
 # h/t to http://stackoverflow.com/a/21494483/1676099
