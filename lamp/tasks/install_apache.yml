@@ -1,4 +1,8 @@
 ---
+- set_fact:
+    email_hostname: '{{ "email." ~ hostname }}'
+  when: email_hostname is not defined
+
 - name: install apache2
   become: yes
   apt:
@@ -22,6 +26,7 @@
       - proxy_fcgi
       - rewrite
       - ssl
+      - proxy_http
 
 - name: disable default sites
   become: yes
