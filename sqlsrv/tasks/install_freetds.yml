@@ -30,7 +30,7 @@
       - name: download the latest freetds version
         get_url:
             url: ftp://ftp.freetds.org/pub/freetds/stable/freetds-patched.tar.gz
-            checksum: md5:{{ freetds_hash.stdout_lines[0] }}
+            checksum: md5:{{ freetds_hash.stdout }}
             dest: /tmp/freetds-patched.tar.gz
 
       - name: unarchive the downloaded package
