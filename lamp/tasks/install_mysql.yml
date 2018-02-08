@@ -6,8 +6,8 @@
       state: present
       update_cache: yes
   with_items:
-      - mysql-server
-      - mysql-client
+      - mysql-server{{ '-' ~ mysql_version if mysql_version is defined else '' }}
+      - mysql-client{{ '-' ~ mysql_version if mysql_version is defined else '' }}
       - python-mysqldb
 
 - name: ensure mysql is started
