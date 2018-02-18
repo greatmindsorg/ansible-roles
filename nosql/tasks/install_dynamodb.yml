@@ -7,13 +7,10 @@
 
 - block:
     - name: install java
-      become: yes
       apt:
           name: default-jre
           state: present
-      tags:
-          - java
-          - dynamodb
+          update_cache: yes
 
     - name: get latest dynamodb hash
       get_url:
@@ -30,7 +27,6 @@
           state: absent
 
     - name: download dynamodb archive
-      become: yes
       get_url:
           url: https://s3-us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_latest.tar.gz
           checksum: sha256:{{ dynamodb_checksum.stdout }}
@@ -48,19 +44,22 @@
           src: /tmp/dynamodb.tar.gz
           dest: /usr/local/lib/dynamodb
 
-    - name: create supervisor dynamodb program
-      become: yes
+    - name: create dynamodb service
       template:
-          src: ../templates/program_dynamodb.conf.j2
-          dest: /etc/supervisor/conf.d/program_dynamodb.conf
-
-    - name: ensure dynamodb is included in supervisorctl
-      become: yes
-      supervisorctl:
-          name: dynamodb
-          state: present
+          src: ../templates/dynamodb.service
+          dest: /lib/systemd/system/dynamodb.service
 
   become: yes
   when: dynamodb.stat.exists == false
+  tags:
+      - dynamodb
+
+- name: ensure dynamodb is started
+  become: yes
+  systemd:
+      daemon_reload: yes
+      name: dynamodb
+      state: started
+      enabled: yes
   tags:
       - dynamodb
