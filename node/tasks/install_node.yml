@@ -4,7 +4,7 @@
 
 - name: add node sources
   become: yes
-  shell: curl -sL https://deb.nodesource.com/setup_6.x | bash -
+  shell: curl -sL https://deb.nodesource.com/setup_9.x | bash -
   args:
       creates: /etc/apt/sources.list.d/nodesource.list
   tags:
