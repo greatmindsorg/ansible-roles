@@ -1,11 +1,15 @@
 <VirtualHost *:80>
   ServerName {{ hostname }}
-  ServerAlias {{ email_hostname }}
+  ServerAlias {{ email_hostname }} {{ server_aliases|default([])|join(' ') }}
   RedirectPermanent / https://%{HTTP_HOST}/
 </VirtualHost>
 
 <VirtualHost *:443>
   ServerName {{ hostname }}
+
+  {% if (server_aliases is defined) and server_aliases %}
+    ServerAlias {{ server_aliases|join(' ') }}
+  {% endif %}
 
   DocumentRoot "{{ document_root }}"
   <FilesMatch \.php$>
