@@ -1,8 +1,4 @@
 ---
-- set_fact:
-    email_hostname: '{{ "email." ~ hostname }}'
-  when: email_hostname is not defined
-
 - name: install apache2
   become: yes
   apt:
@@ -30,27 +26,29 @@
 - name: disable default sites
   become: yes
   file:
-      path: /etc/apache2/sites-enabled/{{ item }}.conf
+      path: /etc/apache2/sites-{{ item[0] }}/{{ item[1] }}.conf
       state: absent
-  with_items:
-    - 000-default
-    - default-ssl
+  with_nested:
+    - ['enabled', 'available']
+    - ['000-default', 'default-ssl']
 
-- name: create virtual host file
-  become: yes
-  template:
-      src: vhost.conf.j2
-      dest: /etc/apache2/sites-available/{{ hostname }}.conf
-  notify:
-      - restart apache
+- name: create vhost
+  include_role:
+    name: lamp
+    tasks_from: create_vhost.yml
+  vars:
+      server_name: "{{ hostname }}"
+      aliases: "{{ server_aliases|default([]) }}"
+      root: "{{ document_root }}"
   tags:
       - vhost
 
-- name: enable new site
+- name: enable sites
   become: yes
   file:
-      src: /etc/apache2/sites-available/{{ hostname }}.conf
-      dest: /etc/apache2/sites-enabled/{{ hostname }}.conf
+      src: /etc/apache2/sites-available
+      dest: /etc/apache2/sites-enabled
       state: link
+      force: yes
   notify:
       - restart apache

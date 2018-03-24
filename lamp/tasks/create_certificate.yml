@@ -34,6 +34,17 @@
   tags:
       - cert
 
+- name: add additional SAN to openssl conf file
+  become: yes
+  ini_file:
+      dest: /etc/ssl/openssl.cnf
+      section: alternate_names
+      option: DNS.{{ item.0 | int + 3 }}
+      value: '{{ item.1 }}'
+  with_indexed_items: '{{ server_aliases|default([]) + additional_vhosts|default([]) }}'
+  tags:
+      - cert
+
 # h/t to https://serialized.net/2013/04/simply-generating-self-signed-ssl-certs-with-ansible/
 - name: create self-signed SSL cert
   become: yes
