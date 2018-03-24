@@ -20,3 +20,5 @@
   template:
     src: "{{ 'reverse_proxy_' if type is defined and type == 'reverse_proxy' else '' }}vhost.conf.j2"
     dest: /etc/apache2/sites-available/{{ server_name }}.conf
+  notify:
+    - restart apache
