@@ -41,7 +41,7 @@
       section: alternate_names
       option: DNS.{{ item.0 | int + 3 }}
       value: '{{ item.1 }}'
-  with_indexed_items: '{{ server_aliases|default([]) }}'
+  with_indexed_items: '{{ server_aliases|default([]) + additional_vhosts|default([]) }}'
   tags:
       - cert
 
