@@ -1,2 +1,2 @@
 ---
-- include: install_sybase.yml
+- include: install_freetds.yml
