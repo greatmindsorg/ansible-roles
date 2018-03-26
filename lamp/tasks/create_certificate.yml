@@ -4,6 +4,10 @@
   when: trust_cert is not defined
 
 - set_fact:
+    certpath: /usr/local/etc
+  when: certpath is not defined
+
+- set_fact:
     email_hostname: '{{ "email." ~ hostname }}'
   when: email_hostname is not defined
 
@@ -49,6 +53,6 @@
   become: yes
   fetch:
     src: /etc/ssl/certs/{{ hostname }}.crt
-    dest: /usr/local/etc/ssl/certs/{{ hostname }}.crt
+    dest: '{{ certpath }}/ssl/certs/{{ hostname }}.crt'
     flat: yes
   when: trust_cert != 0
