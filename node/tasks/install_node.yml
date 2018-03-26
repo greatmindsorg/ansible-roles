@@ -12,7 +12,7 @@
 - block:
       - name: download node setup script
         get_url:
-            url: https://deb.nodesource.com/setup_6.x
+            url: https://deb.nodesource.com/setup_9.x
             dest: /tmp/node_setup
 
       - name: add node source
