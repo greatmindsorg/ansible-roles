@@ -55,7 +55,7 @@
             option: "\ttds version" # the freetds.conf uses leading tabs, which are not currently matched by the ini_file module
             value: 7.1
 
-      - name: remove downloaded composer file
+      - name: remove downloaded files
         file:
               path: "/tmp/{{ item }}"
               state: absent
