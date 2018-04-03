@@ -10,10 +10,10 @@
       - npm
 
 - block:
-    - name: set node version when undefined
-      set_fact:
-          node_version: 9
-      when: node_version is not defined
+      - name: set node version when undefined
+        set_fact:
+            node_version: 9
+        when: node_version is not defined
 
       - name: download node setup script
         get_url:
