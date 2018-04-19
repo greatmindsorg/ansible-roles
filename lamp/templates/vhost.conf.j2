@@ -33,7 +33,7 @@
   {% if server_name == hostname %}
     {% include "files/vhost_fragment.conf.j2" ignore missing %}
   {% else %}
-    {% include "files/{{ server_name|replace('.', '_') }}_vhost_fragment.conf.j2" ignore missing %}
+    {% include "files/{{ server_name }}_vhost_fragment.conf.j2" ignore missing %}
   {% endif %}
 
 </VirtualHost>
