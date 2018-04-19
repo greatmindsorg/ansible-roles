@@ -1,4 +1,8 @@
 ---
+- set_fact:
+      email_hostname: '{{ "email." ~ hostname }}'
+  when: email_hostname is not defined
+
 - name: download mailhog
   become: yes
   get_url:
@@ -36,3 +40,14 @@
   with_items:
       - 25
       - 587
+
+- name: create virtual host
+  include_role:
+    name: lamp
+    tasks_from: create_vhost
+  vars:
+    server_name: "{{ email_hostname }}"
+    port: 8025
+    type: reverse_proxy
+  tags:
+    - vhost
