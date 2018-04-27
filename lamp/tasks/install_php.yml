@@ -24,6 +24,16 @@
   tags:
       - php_modules
 
+- name: install legacy php modules
+  become: yes
+  apt:
+    name: "php{{ php_version if php_version != 7.0 else '' }}-{{ item }}"
+    state: present
+    install_recommends: no
+  with_items: "{{ php_legacy_modules | default([]) }}"
+  tags:
+    - php_legacy_modules
+
 - name: ensure php-fpm is started
   become: yes
   service:
