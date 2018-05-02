@@ -60,6 +60,19 @@
   tags:
       - cert
 
+- name: Ensure ssl-cert group exists
+  become: yes
+  group:
+    name: ssl-cert
+    state: present
+
+- name: loosen cert permissions — only because this is local
+  become: yes
+  user:
+    name: vagrant
+    append: yes
+    groups: ssl-cert
+
 - name: copy cert to host system
   become: yes
   fetch:
