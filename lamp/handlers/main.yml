@@ -14,5 +14,5 @@
 - name: restart php
   become: yes
   service:
-      name: php5-fpm
+      name: php{{ php_version if php_version != 5 else 5 }}-fpm
       state: restarted
