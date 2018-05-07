@@ -1,7 +1,7 @@
 ---
 - set_fact:
     php_version: 5
-  when: php_version is not defined
+  when: php_version == "5.5" or php_version is not defined
   tags:
       - php_modules
 
