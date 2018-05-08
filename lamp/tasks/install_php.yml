@@ -1,24 +1,40 @@
 ---
-- name: install php
-  become: yes
-  apt:
-      name: "{{ item }}"
-      state: present
-  with_items: "{{ ['php5-fpm', 'php5-cli', 'php5-mysql'] + php_modules | default([]) }}"
+- set_fact:
+    php_version: 5
+  when: php_version == "5.5" or php_version is not defined
   tags:
       - php_modules
 
-- name: ensure php5-fpm is started
+- name: add php repo
+  become: yes
+  apt_repository:
+    repo: 'ppa:ondrej/php'
+    state: present
+    update_cache: yes
+  when: php_version != 5
+  tags:
+      - php_modules
+
+- name: install php
+  become: yes
+  apt:
+      name: "php{{ php_version if php_version != 5 else 5 }}-{{ item }}"
+      state: present
+  with_items: "{{ ['fpm', 'cli', 'mysql'] + php_modules | default([]) }}"
+  tags:
+      - php_modules
+
+- name: ensure php-fpm is started
   become: yes
   service:
-      name: php5-fpm
+      name: "php{{ php_version }}-fpm"
       state: started
       enabled: yes
 
 - name: change php-fpm to listen on socket
   become: yes
   ini_file:
-      dest: /etc/php5/fpm/pool.d/www.conf
+      dest: "/etc/php{{ '/' ~ php_version if php_version != 5 else 5 }}/fpm/pool.d/www.conf"
       section: www
       option: listen
       value: 127.0.0.1:9000
@@ -26,9 +42,20 @@
 - name: set default timezone
   become: yes
   ini_file:
-      dest: /etc/php5/fpm/php.ini
+      dest: "/etc/php{{ '/' ~ php_version if php_version != 5 else 5 }}/fpm/php.ini"
       section: Date
       option: date.timezone
       value: 'America/New_York'
+  notify:
+      - restart php
+
+- name: override php settings
+  become: yes
+  with_items: "{{ php_config | default([]) }}"
+  ini_file:
+      dest: "/etc/php{{ '/' ~ php_version if php_version != 5 else 5 }}/fpm/php.ini"
+      option: "{{ item.option }}"
+      section: "{{ item.section | default('PHP') }}"
+      value: "{{ item.value }}"
   notify:
       - restart php
