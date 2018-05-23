@@ -1,15 +1,26 @@
 ---
+- name: set mongodb key IDs by version
+  set_fact:
+    mongodb_key_ids:
+      3.4: 0C49F3730359A14518585931BC711F9BA15703C6
+      3.6: 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+
+- name: set mongodb version when undefined
+  set_fact:
+    mongodb_version: 3.6
+  when: mongodb_version is not defined
+
 - name: add mongo repo key
   become: yes
   apt_key:
       keyserver: keyserver.ubuntu.com
-      id: 0C49F3730359A14518585931BC711F9BA15703C6
+      id: '{{ mongodb_key_ids[mongodb_version] }}'
 
-- name: add latest stable mongodb
+- name: add stable mongodb
   become: yes
-  shell: 'echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.4.list'
+  shell: 'echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/{{ mongodb_version}} multiverse" | tee /etc/apt/sources.list.d/mongodb-org-{{ mongodb_version}}.list'
   args:
-      creates: /etc/apt/sources.list.d/mongodb-org-3.4.list
+      creates: /etc/apt/sources.list.d/mongodb-org-{{ mongodb_version }}.list
   tags:
       - mongo
 
