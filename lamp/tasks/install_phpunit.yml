@@ -1,8 +1,29 @@
 ---
-- name: install phpunit
-  become: yes
-  get_url:
-      url: https://phar.phpunit.de/phpunit.phar
-      dest: /usr/local/bin/phpunit
+- name: stat phpunit
+  stat:
+    path: /usr/local/bin/phpunit
+  register: phpunit
+  tags:
+    - phpunit
+
+- block:
+
+  # This uses `curl` because python 2.7.6 cannot make an SSL request
+  # with SNI. Using `wget` or `curl` is the preferred solution over
+  # upgrading to 2.7.9 on trusty. `warn: false` suppresses the
+  # recommendation to use `get_url`.
+  - name: download phpunit
+    become: yes
+    command: curl -L https://phar.phpunit.de/phpunit.phar -o /usr/local/bin/phpunit
+    args:
+      warn: false
+
+  - name: change phpunit execution permissions
+    become: yes
+    file:
+      path: /usr/local/bin/phpunit
       mode: 0755
-  tags: phpunit
+
+  when: phpunit.stat.exists == false
+  tags:
+    - phpunit
