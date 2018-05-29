@@ -24,6 +24,17 @@
   tags:
       - php_modules
 
+# Simply installing some of the modules does not enable them ¯\_(ツ)_/¯
+# (fpm, cli and mysql are enabled, so they are excluded here on purpose).
+- name: enable php modules
+  become: yes
+  command: php5enmod {{ item }}
+  with_items: "{{ php_modules | default([]) }}"
+  notify:
+      - restart php
+  tags:
+      - php_modules
+
 - name: ensure php-fpm is started
   become: yes
   service:
