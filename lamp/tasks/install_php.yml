@@ -28,7 +28,7 @@
 # (fpm, cli and mysql are enabled, so they are excluded here on purpose).
 - name: enable php modules
   become: yes
-  command: php5enmod {{ item }}
+  command: "php{{ '5' if php_version == 5 else '' }}enmod {{ item }}"
   with_items: "{{ php_modules | default([]) }}"
   notify:
       - restart php
