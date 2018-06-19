@@ -43,11 +43,21 @@
   tags:
       - vhost
 
+- name: stat sites-enabled to determine if it is already a link
+  stat:
+      path: /etc/apache2/sites-enabled
+  register: sites
+  tags:
+    - vhost
+
 - name: make sure sites-enabled does not exist
   become: yes
   file:
       path: /etc/apache2/sites-enabled
       state: absent
+  when: sites.stat.exists and (not sites.stat.islnk or sites.stat.lnk_source != "/etc/apache2/sites-available")
+  tags:
+    - vhost
 
 - name: enable sites
   become: yes
@@ -57,3 +67,5 @@
       state: link
   notify:
       - restart apache
+  tags:
+    - vhost
