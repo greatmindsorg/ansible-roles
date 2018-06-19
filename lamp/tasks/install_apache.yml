@@ -43,12 +43,17 @@
   tags:
       - vhost
 
+- name: make sure sites-enabled does not exist
+  become: yes
+  file:
+      path: /etc/apache2/sites-enabled
+      state: absent
+
 - name: enable sites
   become: yes
   file:
       src: /etc/apache2/sites-available
       dest: /etc/apache2/sites-enabled
       state: link
-      force: yes
   notify:
       - restart apache
