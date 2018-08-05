@@ -60,7 +60,7 @@
   mysql_db:
       name: "{{ item }}"
       state: present
-  with_items: "{{ mysql_databases }}"
+  with_items: "{{ mysql_databases|default([]) }}"
 
 - name: override mysql settings
   become: yes
