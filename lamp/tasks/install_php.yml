@@ -1,6 +1,6 @@
 ---
 - set_fact:
-    php_version: 7.3
+    php_version: 7.4
   when: php_version is not defined
   tags:
       - php_modules
@@ -11,14 +11,14 @@
     repo: 'ppa:ondrej/php'
     state: present
     update_cache: yes
-  when: php_version != 7.3
+  when: php_version != 7.4
   tags:
       - php_modules
 
 - name: install php
   become: yes
   apt:
-      name: "php{{ php_version if php_version != 7.3 else '' }}-{{ item }}"
+      name: "php{{ php_version if php_version != 7.4 else '' }}-{{ item }}"
       state: present
   with_items: "{{ ['fpm', 'cli', 'mysql', 'xdebug', 'zip'] + php_modules | default([]) }}"
   tags:
